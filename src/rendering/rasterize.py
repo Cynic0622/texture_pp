@@ -100,7 +100,7 @@ def render_view(
     background: Sequence[float] = (1.0, 1.0, 1.0),
     texture_filter_mode: str | None = None,
 ) -> RenderResult:
-    from texture_pp.rendering.proj_matrix import make_proj_matrix
+    from src.rendering.proj_matrix import make_proj_matrix
 
     view_mat = view["view"]
     proj_matrix = make_proj_matrix(view["persp"], ref_res)

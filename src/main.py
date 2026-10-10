@@ -1,10 +1,3 @@
-"""
-Run as: python texture_pp/main.py -m <model.obj> [-t <tex.png>]
-
-The final super-resolved texture is saved next to the mesh as
-<model_name>_hr.png.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -15,8 +8,8 @@ _REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from texture_pp.config import Config
-from texture_pp.pipeline import super_resolve_texture
+from src.config import Config
+from src.pipeline import super_resolve_texture
 
 
 def _build_argparser() -> argparse.ArgumentParser:
@@ -35,13 +28,8 @@ def _build_argparser() -> argparse.ArgumentParser:
                         "<model>.png next to the mesh.")
 
     # --- SR model ---
-    p.add_argument("--pretrained_model_path", type=str,
-                   default=str(default_models_path / "stable-diffusion-2-1-base"),
-                   help="SD 2.1 base model directory (contains unet / vae / "
-                        "text_encoder / tokenizer subfolders).")
-    p.add_argument("--pretrained_path", type=str,
-                   default=str(default_models_path / "texture_sr.pkl"),
-                   help="Fine-tuned TextureSRModel checkpoint.")
+    p.add_argument("--sr_model_path", type=str,
+                   default=str(default_models_path / "texture_sr_model"))
     p.add_argument("--upscale", type=int, default=4,
                    help="Super-resolution scale factor.")
 
@@ -101,8 +89,7 @@ def _args_to_config(args: argparse.Namespace) -> Config:
     return Config(
         model_path=args.model_path,
         tex_path=args.tex_path,
-        pretrained_model_path=args.pretrained_model_path,
-        pretrained_path=args.pretrained_path,
+        sr_model_path=args.sr_model_path,
         upscale=args.upscale,
         split_curved_angle_deg=args.split_curved_angle_deg,
         min_view_extent_ratio=args.min_view_extent_ratio,

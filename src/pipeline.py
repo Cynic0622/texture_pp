@@ -14,14 +14,14 @@ from tqdm import tqdm
 
 import nvdiffrast.torch as dr
 
-from texture_pp.config import Config
-from texture_pp.io_utils import OBJ, load_texture, save_image
-from texture_pp.geometry import select_views
-from texture_pp.rendering import dilate_lut, precompute_texture_luts, render_view
-from texture_pp.quality import compute_view_quality, get_new_mask, sample_global_quality
-from texture_pp.projection import project_per_texel_gather
-from texture_pp.rendering.proj_matrix import make_proj_matrix
-from texture_pp.sr.local import LocalSRModel
+from src.config import Config
+from src.io_utils import OBJ, load_texture, save_image
+from src.geometry import select_views
+from src.rendering import dilate_lut, precompute_texture_luts, render_view
+from src.quality import compute_view_quality, get_new_mask, sample_global_quality
+from src.projection import project_per_texel_gather
+from src.rendering.proj_matrix import make_proj_matrix
+from src.sr.local import LocalSRModel
 
 warnings.filterwarnings("ignore", category=FutureWarning, message=".*weights_only=False.*")
 

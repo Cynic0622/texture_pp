@@ -14,8 +14,7 @@ class Config:
     tex_path: Optional[str] = None
 
     # ---- SR model ----
-    pretrained_model_path: str = ""
-    pretrained_path: str = ""
+    sr_model_path: str = ""
     upscale: int = 4
 
     # ---- rendering ----
