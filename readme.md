@@ -28,11 +28,10 @@ python src/main.py -m <model.obj> [-t <tex.png>]
 python src/main.py -m <model_dir>
 ```
 
-Key arguments that affect the SR results:
+Key arguments:
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `--upscale` | `4` | Super-resolution scale factor |
 | `--split_curved_angle_deg` | `90.0` | Recursive split threshold (deg) for normal spread within an island |
 | `--min_view_extent_ratio` | `0.30` | Lower bound on (island_extent / camera_distance) |
 | `--merge_min_face_count` | `200` | An island with fewer faces is candidate for merging into its largest non-small 3D-adjacent neighbour |
