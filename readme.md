@@ -45,28 +45,29 @@ Key arguments:
 
 ## Model Files and Weight Paths
 
-Placed under `models/` in the repo root by default (overridable via CLI arguments) available at [Hugging Face](https://huggingface.co/wshw/texture_pp):
+Placed under `models/` in the repo root by default (overridable via CLI arguments):
 
-| Weight | Default path |
-|--------|-------------|
-| TextureSRModel | `models/texture_sr_model/` |
+| Weight | Default path | Source |
+|--------|-------------|--------|
+| TextureSRModel | `models/texture_sr_model/` | [Hugging Face](https://huggingface.co/wshw/texture_pp) |
+| SD 2.1 base  | `models/stable-diffusion-2-1-base/` | [stabilityai/stable-diffusion-2-1-base](https://huggingface.co/stabilityai/stable-diffusion-2-1-base) |
+| HYPIR SD2 LoRA | `models/HYPIR_sd2.pth` | [Hugging Face](https://huggingface.co/lxq007/HYPIR/tree/main) · [OpenXLab](https://openxlab.org.cn/models/detail/linxinqi/HYPIR/tree/main) |
 
 ## Directory Structure
 
 ```
 texture_pp/
 ├── src/
-│   ├── main.py              CLI entry
-│   ├── pipeline.py          inference loop (super_resolve_texture)
-│   ├── config.py            Config
+│   ├── main.py              CLI entry (inference)
+│   ├── pipeline.py
+│   ├── config.py
 │   ├── io_utils/            OBJ loading, texture loading, image saving
 │   ├── geometry/            UV-island / seam view selection
 │   ├── rendering/           projection matrix, rasterisation, texture-space LUTs
 │   ├── quality/             view quality Q_view, quadtree mask refinement
 │   ├── projection/          per-texel gather back-projection
-│   └── sr/
-│       ├── local.py         LocalSRModel wrapper
-│       └── model/           TextureSRModel and SD network definitions
+│   └── sr/                  super-resolution models
+├── objs/                    example assets (mug)
 └── requirement.txt
 ```
 
@@ -84,8 +85,19 @@ If you find Texture++ useful, please cite:
 }
 ```
 
-
 ## License
 
 This project is licensed under the MIT License.
+
+### Third-party code and weights
+
+- `src/sr/global_sr/` is derived from [HYPIR](https://github.com/SupPixel/HYPIR)
+  (© 2024 SupPixel Pty Ltd) and is governed by the HYPIR Software License
+  Agreement (see `src/sr/global_sr/LICENSE`): source code may be used,
+  modified and distributed for **non-commercial** purposes only. The HYPIR
+  network weights are not distributed with this repository and must be
+  downloaded separately from the official release under the same terms.
+- `src/sr/model/autoencoder_kl.py` and `src/sr/model/unet_2d_condition.py`
+  are modified from HuggingFace diffusers and retain their original
+  Apache-2.0 headers.
 

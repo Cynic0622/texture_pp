@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 
 @dataclass
@@ -13,9 +13,20 @@ class Config:
     model_path: str = ""
     tex_path: Optional[str] = None
 
-    # ---- SR model ----
+    # ---- SR ----
     sr_model_path: str = ""
     upscale: int = 4
+
+    global_base_model_path: str = ""
+    global_weight_path: str = ""
+    global_lora_modules: List[str] = field(default_factory=list)
+    global_lora_rank: int = 256
+    global_model_t: int = 200
+    global_coeff_t: int = 200
+    global_upscale: int = 1
+    global_patch_size: int = 512
+    global_stride: int = 256
+    use_local_sr_threshold: float = 0.75
 
     # ---- rendering ----
     ref_res: int = 1024

@@ -22,6 +22,7 @@ from src.quality import compute_view_quality, get_new_mask, sample_global_qualit
 from src.projection import project_per_texel_gather
 from src.rendering.proj_matrix import make_proj_matrix
 from src.sr.local import LocalSRModel
+from src.sr.global_sr import GlobalSR
 
 warnings.filterwarnings("ignore", category=FutureWarning, message=".*weights_only=False.*")
 
@@ -111,8 +112,8 @@ def super_resolve_texture(cfg: Config) -> torch.Tensor:
         log=False,
     )
 
-    # ---- local SR model ----------------------------------------------------
     local_sr = LocalSRModel(cfg)
+    global_sr = GlobalSR(cfg)
 
     pbar = tqdm(range(len(views)), dynamic_ncols=True)
     for i in pbar:
@@ -141,15 +142,30 @@ def super_resolve_texture(cfg: Config) -> torch.Tensor:
         m_np = get_new_mask(update_mask.cpu().numpy(), min_block_size=9)
         update_mask_tree = torch.from_numpy(m_np).bool()
 
+        update_ratio = 0.0
+        alpha_sum = cur.alpha_mask.float().sum().item()
+        if alpha_sum > 0:
+            update_ratio = update_mask_tree.float().sum().item() / alpha_sum
+        use_local_sr = update_ratio < cfg.use_local_sr_threshold
+
         with torch.no_grad():
-            input_image_for_sr = cur.image.clone()
-            mask_3 = update_mask_tree.unsqueeze(-1).expand_as(cur.image)
-            input_image_for_sr[mask_3] = ref.image[mask_3]
-            sr_image = local_sr(
-                input_image_for_sr,
-                mask=update_mask_tree,
-                prompt="",
-            )
+            if use_local_sr:
+                input_image_for_sr = cur.image.clone()
+                mask_3 = update_mask_tree.unsqueeze(-1).expand_as(cur.image)
+                input_image_for_sr[mask_3] = ref.image[mask_3]
+                sr_image = local_sr(
+                    input_image_for_sr,
+                    mask=update_mask_tree,
+                    prompt="",
+                )
+            else:
+                sr_image = global_sr(
+                    ref.image.clone(),
+                    prompt="",
+                    upscale=cfg.global_upscale,
+                    patch_size=cfg.global_patch_size,
+                    stride=cfg.global_stride,
+                )
 
         proj_matrix_np = make_proj_matrix(view["persp"], cfg.ref_res)
         opt_tex, Q_global, _ = project_per_texel_gather(

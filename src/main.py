@@ -31,6 +31,21 @@ def _build_argparser() -> argparse.ArgumentParser:
                    default=str(default_models_path / "texture_sr_model"))
     p.add_argument("--upscale", type=int, default=4)
 
+    p.add_argument("--global_base_model_path", type=str,
+                   default=str(default_models_path / "stable-diffusion-2-1-base"))
+    p.add_argument("--global_weight_path", type=str,
+                   default=str(default_models_path / "HYPIR_sd2.pth"))
+    p.add_argument("--global_lora_modules", type=str,
+                   default="to_k to_q to_v to_out.0 conv conv1 conv2 conv_shortcut "
+                           "conv_out proj_in proj_out ff.net.2 ff.net.0.proj")
+    p.add_argument("--global_lora_rank", type=int, default=256)
+    p.add_argument("--global_model_t", type=int, default=200)
+    p.add_argument("--global_coeff_t", type=int, default=200)
+    p.add_argument("--global_upscale", type=int, default=1)
+    p.add_argument("--global_patch_size", type=int, default=512)
+    p.add_argument("--global_stride", type=int, default=256)
+    p.add_argument("--use_local_sr_threshold", type=float, default=0.75)
+
     # --- view-selection tuning knobs ---
     p.add_argument("--split_curved_angle_deg", type=float, default=90.0,
                    help="Recursive split threshold (deg) for normal spread within "
@@ -73,6 +88,16 @@ def _args_to_config(args: argparse.Namespace) -> Config:
         tex_path=args.tex_path,
         sr_model_path=args.sr_model_path,
         upscale=args.upscale,
+        global_base_model_path=args.global_base_model_path,
+        global_weight_path=args.global_weight_path,
+        global_lora_modules=args.global_lora_modules.split(" "),
+        global_lora_rank=args.global_lora_rank,
+        global_model_t=args.global_model_t,
+        global_coeff_t=args.global_coeff_t,
+        global_upscale=args.global_upscale,
+        global_patch_size=args.global_patch_size,
+        global_stride=args.global_stride,
+        use_local_sr_threshold=args.use_local_sr_threshold,
         split_curved_angle_deg=args.split_curved_angle_deg,
         min_view_extent_ratio=args.min_view_extent_ratio,
         merge_min_face_count=args.merge_min_face_count,
